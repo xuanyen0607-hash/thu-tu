@@ -10,149 +10,133 @@
 <title>Quản Lý Thư Từ</title>
 <style>
   :root {
-    --bg: #0f0f1a;
-    --surface: #1a1a2e;
-    --surface2: #16213e;
-    --accent: #e94560;
-    --text: #eaeaea;
-    --text-muted: #8892b0;
-    --success: #64ffda;
-    --warning: #ffd166;
-    --border: rgba(255,255,255,0.08);
+    --bg: #0f0f1a; --surface: #1a1a2e; --surface2: #16213e;
+    --accent: #e94560; --text: #eaeaea; --text-muted: #8892b0;
+    --success: #64ffda; --warning: #ffd166; --border: rgba(255,255,255,0.08);
     --font: 'Segoe UI', system-ui, sans-serif;
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  body { background: var(--bg); color: var(--text); font-family: var(--font); min-height: 100vh; overflow-x: hidden; }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  body { background:var(--bg); color:var(--text); font-family:var(--font); min-height:100vh; overflow-x:hidden; }
 
-  .header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 20px; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 100; }
-  .header-icon { width: 40px; height: 40px; background: var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
-  .header h1 { font-size: 18px; font-weight: 600; }
-  .header p { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+  .header { background:var(--surface); border-bottom:1px solid var(--border); padding:16px 20px; display:flex; align-items:center; gap:12px; position:sticky; top:0; z-index:100; }
+  .header-icon { width:40px; height:40px; background:var(--accent); border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:20px; }
+  .header h1 { font-size:18px; font-weight:600; }
+  .header p { font-size:12px; color:var(--text-muted); margin-top:1px; }
 
-  .tabs { display: flex; background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 12px; }
-  .tab { flex: 1; padding: 12px 8px; font-size: 13px; color: var(--text-muted); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s; font-family: var(--font); }
-  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .tabs { display:flex; background:var(--surface); border-bottom:1px solid var(--border); padding:0 12px; }
+  .tab { flex:1; padding:12px 8px; font-size:13px; color:var(--text-muted); background:none; border:none; border-bottom:2px solid transparent; cursor:pointer; transition:all 0.2s; font-family:var(--font); }
+  .tab.active { color:var(--accent); border-bottom-color:var(--accent); }
 
-  .page { display: none; padding: 16px; }
-  .page.active { display: block; }
+  .page { display:none; padding:16px; }
+  .page.active { display:block; }
 
-  .scanner-box { background: var(--surface); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 16px; }
-  #preview-container { position: relative; width: 100%; aspect-ratio: 1; background: #000; overflow: hidden; }
-  #preview { width: 100%; height: 100%; object-fit: cover; }
-  .scan-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
-  .scan-frame { width: 60%; aspect-ratio: 1; border: 2px solid var(--accent); border-radius: 16px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.45); position: relative; }
-  .scan-line { position: absolute; left: 0; right: 0; height: 2px; background: var(--accent); animation: scanline 2s ease-in-out infinite; box-shadow: 0 0 8px var(--accent); }
-  @keyframes scanline { 0% { top: 10%; } 50% { top: 85%; } 100% { top: 10%; } }
-  .scan-corner { position: absolute; width: 16px; height: 16px; border-color: var(--success); border-style: solid; border-width: 0; }
-  .scan-corner.tl { top:-2px; left:-2px; border-top-width:3px; border-left-width:3px; border-radius:6px 0 0 0; }
-  .scan-corner.tr { top:-2px; right:-2px; border-top-width:3px; border-right-width:3px; border-radius:0 6px 0 0; }
-  .scan-corner.bl { bottom:-2px; left:-2px; border-bottom-width:3px; border-left-width:3px; border-radius:0 0 0 6px; }
-  .scan-corner.br { bottom:-2px; right:-2px; border-bottom-width:3px; border-right-width:3px; border-radius:0 0 6px 0; }
+  .scanner-box { background:var(--surface); border-radius:20px; overflow:hidden; border:1px solid var(--border); margin-bottom:16px; }
+  #preview-container { position:relative; width:100%; aspect-ratio:1; background:#000; overflow:hidden; }
+  #preview { width:100%; height:100%; object-fit:cover; }
+  .scan-overlay { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; }
+  .scan-frame { width:60%; aspect-ratio:1; border:2px solid var(--accent); border-radius:16px; box-shadow:0 0 0 9999px rgba(0,0,0,0.45); position:relative; }
+  .scan-line { position:absolute; left:0; right:0; height:2px; background:var(--accent); animation:scanline 2s ease-in-out infinite; box-shadow:0 0 8px var(--accent); }
+  @keyframes scanline { 0%{top:10%;} 50%{top:85%;} 100%{top:10%;} }
+  .scan-corner { position:absolute; width:16px; height:16px; border-color:var(--success); border-style:solid; border-width:0; }
+  .scan-corner.tl{top:-2px;left:-2px;border-top-width:3px;border-left-width:3px;border-radius:6px 0 0 0;}
+  .scan-corner.tr{top:-2px;right:-2px;border-top-width:3px;border-right-width:3px;border-radius:0 6px 0 0;}
+  .scan-corner.bl{bottom:-2px;left:-2px;border-bottom-width:3px;border-left-width:3px;border-radius:0 0 0 6px;}
+  .scan-corner.br{bottom:-2px;right:-2px;border-bottom-width:3px;border-right-width:3px;border-radius:0 0 6px 0;}
 
-  .scanner-status { padding: 14px 16px; display: flex; align-items: center; gap: 10px; border-top: 1px solid var(--border); }
-  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-muted); flex-shrink: 0; }
-  .status-dot.scanning { background: var(--accent); animation: pulse 1s infinite; }
-  .status-dot.found { background: var(--success); }
+  .scanner-status { padding:14px 16px; display:flex; align-items:center; gap:10px; border-top:1px solid var(--border); }
+  .status-dot { width:8px; height:8px; border-radius:50%; background:var(--text-muted); flex-shrink:0; }
+  .status-dot.scanning { background:var(--accent); animation:pulse 1s infinite; }
+  .status-dot.found { background:var(--success); }
   @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
-  #status-text { font-size: 13px; color: var(--text-muted); }
+  #status-text { font-size:13px; color:var(--text-muted); }
 
-  .result-card { background: var(--surface2); border-radius: 16px; padding: 16px; border: 1px solid var(--border); margin-bottom: 16px; display: none; }
-  .result-card.show { display: block; }
-  .barcode-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
-  .barcode-value { font-size: 20px; font-weight: 700; color: var(--success); letter-spacing: 2px; margin-bottom: 16px; word-break: break-all; }
+  .result-card { background:var(--surface2); border-radius:16px; padding:16px; border:1px solid var(--border); margin-bottom:16px; display:none; }
+  .result-card.show { display:block; }
+  .barcode-label { font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:4px; }
+  .barcode-value { font-size:20px; font-weight:700; color:var(--success); letter-spacing:2px; margin-bottom:16px; word-break:break-all; }
 
-  .section-title { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; margin-top: 4px; }
+  .section-title { font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:8px; margin-top:4px; }
 
-  .form-grid { display: flex; flex-direction: column; gap: 10px; }
-  .form-row { display: flex; gap: 10px; }
-  .form-row .field { flex: 1; min-width: 0; }
-  .field label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; display: block; }
-  .field input, .field select {
-    width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-    border-radius: 10px; padding: 10px 12px; color: var(--text); font-size: 14px;
-    font-family: var(--font); outline: none; transition: border-color 0.2s;
-  }
-  .field input:focus, .field select:focus { border-color: var(--accent); }
-  .field select option { background: var(--surface2); }
-  .field input:read-only { opacity: 0.6; cursor: default; }
+  .form-grid { display:flex; flex-direction:column; gap:10px; }
+  .form-row { display:flex; gap:10px; }
+  .form-row .field { flex:1; min-width:0; }
+  .field label { font-size:12px; color:var(--text-muted); margin-bottom:4px; display:block; }
+  .field input, .field select { width:100%; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:10px; padding:10px 12px; color:var(--text); font-size:14px; font-family:var(--font); outline:none; transition:border-color 0.2s; }
+  .field input:focus, .field select:focus { border-color:var(--accent); }
+  .field select option { background:var(--surface2); }
 
-  /* Info card hiện sau khi tra SĐT */
-  .nv-card {
-    background: rgba(100,255,218,0.05);
-    border: 1px solid rgba(100,255,218,0.2);
-    border-radius: 12px;
-    padding: 12px 14px;
-    display: none;
-    gap: 8px;
-    flex-direction: column;
-  }
-  .nv-card.show { display: flex; }
-  .nv-card-header { display: flex; align-items: center; gap: 8px; }
-  .nv-avatar { width: 36px; height: 36px; border-radius: 50%; background: rgba(100,255,218,0.15); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
-  .nv-name { font-size: 14px; font-weight: 600; color: var(--success); }
-  .nv-sub { font-size: 12px; color: var(--text-muted); }
-  .nv-tags { display: flex; flex-wrap: wrap; gap: 6px; }
-  .nv-tag { background: rgba(255,255,255,0.07); border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 12px; color: var(--text-muted); }
-  .nv-tag span { color: var(--text); font-weight: 500; }
+  /* Chụp nhãn */
+  .photo-btn-row { display:flex; gap:8px; margin-bottom:4px; }
+  .photo-btn { flex:1; padding:12px; background:rgba(100,255,218,0.08); border:1px solid rgba(100,255,218,0.25); border-radius:12px; color:var(--success); font-size:14px; font-weight:600; cursor:pointer; font-family:var(--font); text-align:center; transition:all 0.2s; }
+  .photo-btn:active { transform:scale(0.97); }
+  .photo-btn.loading { opacity:0.6; pointer-events:none; }
+  #photo-preview-wrap { display:none; border-radius:12px; overflow:hidden; border:1px solid var(--border); margin-bottom:4px; position:relative; }
+  #photo-preview-wrap.show { display:block; }
+  #photo-preview-img { width:100%; max-height:180px; object-fit:cover; display:block; }
+  .photo-clear { position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.6); border:none; color:#fff; width:28px; height:28px; border-radius:50%; font-size:14px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+  .ocr-result { background:rgba(100,255,218,0.05); border:1px solid rgba(100,255,218,0.2); border-radius:12px; padding:12px 14px; font-size:13px; color:var(--text-muted); line-height:1.6; display:none; }
+  .ocr-result.show { display:block; }
+  .ocr-result strong { color:var(--success); font-size:11px; text-transform:uppercase; letter-spacing:0.5px; }
 
-  .nv-not-found {
-    background: rgba(233,69,96,0.05);
-    border: 1px solid rgba(233,69,96,0.2);
-    border-radius: 12px;
-    padding: 10px 14px;
-    font-size: 13px;
-    color: var(--accent);
-    display: none;
-  }
-  .nv-not-found.show { display: block; }
+  /* NV card */
+  .nv-card { background:rgba(100,255,218,0.05); border:1px solid rgba(100,255,218,0.2); border-radius:12px; padding:12px 14px; display:none; flex-direction:column; gap:8px; }
+  .nv-card.show { display:flex; }
+  .nv-card-header { display:flex; align-items:center; gap:8px; }
+  .nv-avatar { width:36px; height:36px; border-radius:50%; background:rgba(100,255,218,0.15); display:flex; align-items:center; justify-content:center; font-size:16px; flex-shrink:0; }
+  .nv-name { font-size:14px; font-weight:600; color:var(--success); }
+  .nv-sub { font-size:12px; color:var(--text-muted); }
+  .nv-tags { display:flex; flex-wrap:wrap; gap:6px; }
+  .nv-tag { background:rgba(255,255,255,0.07); border:1px solid var(--border); border-radius:6px; padding:4px 10px; font-size:12px; color:var(--text-muted); }
+  .nv-tag span { color:var(--text); font-weight:500; }
+  .nv-not-found { background:rgba(233,69,96,0.05); border:1px solid rgba(233,69,96,0.2); border-radius:12px; padding:10px 14px; font-size:13px; color:var(--accent); display:none; }
+  .nv-not-found.show { display:block; }
 
-  .sdt-row { display: flex; gap: 8px; align-items: flex-end; }
-  .sdt-row .field { flex: 1; }
-  .lookup-btn { padding: 10px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 13px; cursor: pointer; font-family: var(--font); white-space: nowrap; transition: all 0.2s; flex-shrink: 0; }
-  .lookup-btn:active { transform: scale(0.96); }
-  .lookup-btn.loading { opacity: 0.6; pointer-events: none; }
+  .sdt-row { display:flex; gap:8px; align-items:flex-end; }
+  .sdt-row .field { flex:1; }
+  .lookup-btn { padding:10px 14px; background:var(--surface); border:1px solid var(--border); border-radius:10px; color:var(--text); font-size:13px; cursor:pointer; font-family:var(--font); white-space:nowrap; transition:all 0.2s; flex-shrink:0; }
+  .lookup-btn:active { transform:scale(0.96); }
+  .lookup-btn.loading { opacity:0.6; pointer-events:none; }
 
-  .btn { width: 100%; padding: 14px; border-radius: 14px; border: none; font-size: 15px; font-weight: 600; cursor: pointer; font-family: var(--font); transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-  .btn-primary { background: var(--accent); color: #fff; }
-  .btn-primary:active { transform: scale(0.97); }
-  .btn-scan { background: var(--surface); color: var(--text); border: 1px solid var(--border); margin-bottom: 10px; }
-  .btn-scan:active { transform: scale(0.97); }
+  .btn { width:100%; padding:14px; border-radius:14px; border:none; font-size:15px; font-weight:600; cursor:pointer; font-family:var(--font); transition:all 0.2s; display:flex; align-items:center; justify-content:center; gap:8px; }
+  .btn-primary { background:var(--accent); color:#fff; }
+  .btn-primary:active { transform:scale(0.97); }
+  .btn-scan { background:var(--surface); color:var(--text); border:1px solid var(--border); margin-bottom:10px; }
 
-  .divider { display: flex; align-items: center; gap: 10px; margin: 12px 0; }
-  .divider::before, .divider::after { content:''; flex:1; height:1px; background:var(--border); }
-  .divider span { font-size: 12px; color: var(--text-muted); }
+  .divider { display:flex; align-items:center; gap:10px; margin:12px 0; }
+  .divider::before,.divider::after { content:''; flex:1; height:1px; background:var(--border); }
+  .divider span { font-size:12px; color:var(--text-muted); }
 
-  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 12px 20px; border-radius: 12px; font-size: 14px; z-index: 9999; transition: transform 0.3s ease; white-space: nowrap; box-shadow: 0 8px 32px rgba(0,0,0,0.4); max-width: 90vw; text-align: center; }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-  .toast.success { border-color: var(--success); color: var(--success); }
-  .toast.error { border-color: var(--accent); color: var(--accent); }
+  .toast { position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(80px); background:var(--surface2); border:1px solid var(--border); color:var(--text); padding:12px 20px; border-radius:12px; font-size:14px; z-index:9999; transition:transform 0.3s ease; white-space:nowrap; box-shadow:0 8px 32px rgba(0,0,0,0.4); max-width:90vw; text-align:center; }
+  .toast.show { transform:translateX(-50%) translateY(0); }
+  .toast.success { border-color:var(--success); color:var(--success); }
+  .toast.error { border-color:var(--accent); color:var(--accent); }
 
-  .history-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-  .history-header h2 { font-size: 16px; font-weight: 600; }
-  .badge { background: var(--accent); color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 6px; font-weight: 600; }
-  .history-item { background: var(--surface); border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; border: 1px solid var(--border); border-left: 3px solid var(--accent); }
-  .history-item.success { border-left-color: var(--success); }
-  .hi-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
-  .hi-barcode { font-size: 14px; font-weight: 600; letter-spacing: 1px; color: var(--success); }
-  .hi-time { font-size: 11px; color: var(--text-muted); }
-  .hi-row { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
-  .hi-status { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; margin-top: 8px; padding: 3px 8px; border-radius: 6px; }
-  .hi-status.ok { background: rgba(100,255,218,0.1); color: var(--success); }
-  .hi-status.fail { background: rgba(233,69,96,0.1); color: var(--accent); }
+  .history-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .history-header h2 { font-size:16px; font-weight:600; }
+  .badge { background:var(--accent); color:#fff; font-size:11px; padding:3px 8px; border-radius:6px; font-weight:600; }
+  .history-item { background:var(--surface); border-radius:14px; padding:14px 16px; margin-bottom:10px; border:1px solid var(--border); border-left:3px solid var(--accent); }
+  .history-item.success { border-left-color:var(--success); }
+  .hi-top { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px; }
+  .hi-barcode { font-size:14px; font-weight:600; letter-spacing:1px; color:var(--success); }
+  .hi-time { font-size:11px; color:var(--text-muted); }
+  .hi-row { font-size:12px; color:var(--text-muted); margin-top:3px; }
+  .hi-status { display:inline-flex; align-items:center; gap:4px; font-size:11px; margin-top:8px; padding:3px 8px; border-radius:6px; }
+  .hi-status.ok { background:rgba(100,255,218,0.1); color:var(--success); }
+  .hi-status.fail { background:rgba(233,69,96,0.1); color:var(--accent); }
 
-  .settings-section { margin-bottom: 24px; }
-  .settings-section h3 { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; padding-left: 4px; }
-  .setting-item { background: var(--surface); border-radius: 12px; padding: 14px 16px; border: 1px solid var(--border); margin-bottom: 8px; }
-  .setting-item label { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; display: block; }
-  .setting-item input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; padding: 9px 12px; color: var(--text); font-size: 13px; font-family: var(--font); outline: none; }
-  .setting-item input:focus { border-color: var(--accent); }
-  .info-box { background: rgba(100,255,218,0.05); border: 1px solid rgba(100,255,218,0.2); border-radius: 12px; padding: 14px 16px; font-size: 13px; color: var(--text-muted); line-height: 1.7; }
-  .info-box strong { color: var(--success); }
+  .settings-section { margin-bottom:24px; }
+  .settings-section h3 { font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-bottom:10px; padding-left:4px; }
+  .setting-item { background:var(--surface); border-radius:12px; padding:14px 16px; border:1px solid var(--border); margin-bottom:8px; }
+  .setting-item label { font-size:13px; color:var(--text-muted); margin-bottom:6px; display:block; }
+  .setting-item input { width:100%; background:rgba(255,255,255,0.05); border:1px solid var(--border); border-radius:8px; padding:9px 12px; color:var(--text); font-size:13px; font-family:var(--font); outline:none; }
+  .setting-item input:focus { border-color:var(--accent); }
+  .info-box { background:rgba(100,255,218,0.05); border:1px solid rgba(100,255,218,0.2); border-radius:12px; padding:14px 16px; font-size:13px; color:var(--text-muted); line-height:1.7; }
+  .info-box strong { color:var(--success); }
 
-  .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
-  .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
-  .loading-spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
-  @keyframes spin { to { transform: rotate(360deg); } }
+  .empty-state { text-align:center; padding:40px 20px; color:var(--text-muted); }
+  .empty-state .icon { font-size:40px; margin-bottom:12px; }
+  .loading-spinner { display:inline-block; width:16px; height:16px; border:2px solid rgba(255,255,255,0.3); border-top-color:#fff; border-radius:50%; animation:spin 0.7s linear infinite; }
+  @keyframes spin { to{transform:rotate(360deg);} }
 </style>
 </head>
 <body>
@@ -193,7 +177,6 @@
   <button class="btn btn-scan" id="start-btn" onclick="toggleCamera()">📷 Bắt đầu quét</button>
 
   <div class="divider"><span>hoặc nhập thủ công</span></div>
-
   <div style="display:flex;gap:8px;margin-bottom:16px;">
     <input type="text" id="manual-code" placeholder="Nhập mã vận đơn..." style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:11px 14px;color:#eaeaea;font-size:14px;outline:none;font-family:inherit;">
     <button class="btn btn-primary" style="width:auto;padding:11px 16px;border-radius:10px;" onclick="useManualCode()">OK</button>
@@ -205,7 +188,25 @@
 
     <div class="form-grid">
 
-      <div class="section-title">📅 Thông tin nhận</div>
+      <!-- CHỤP NHÃN -->
+      <div class="section-title">🤖 Đọc nhãn tự động (AI)</div>
+      <div class="photo-btn-row">
+        <button class="photo-btn" id="photo-btn" onclick="triggerPhoto()">📸 Chụp nhãn bưu kiện</button>
+      </div>
+      <input type="file" id="photo-input" accept="image/*" capture="environment" style="display:none" onchange="processPhoto(event)">
+
+      <div id="photo-preview-wrap">
+        <img id="photo-preview-img" src="" alt="Nhãn bưu kiện">
+        <button class="photo-clear" onclick="clearPhoto()">✕</button>
+      </div>
+
+      <div class="ocr-result" id="ocr-result">
+        <strong>AI đọc được:</strong><br>
+        <span id="ocr-text"></span>
+      </div>
+
+      <div class="divider"><span>thông tin nhận</span></div>
+
       <div class="form-row">
         <div class="field">
           <label>Ngày nhận</label>
@@ -225,16 +226,15 @@
       <div class="section-title">📦 Người gửi</div>
       <div class="field">
         <label>Người gửi</label>
-        <input type="text" id="f-nguoiGui" placeholder="Tên / địa chỉ người gửi">
+        <input type="text" id="f-nguoiGui" placeholder="Tự điền từ AI hoặc nhập tay">
       </div>
 
       <div class="section-title">👤 Người nhận</div>
       <div class="field">
         <label>Tên người nhận</label>
-        <input type="text" id="f-nguoiNhan" placeholder="Nhập tên...">
+        <input type="text" id="f-nguoiNhan" placeholder="Tự điền từ AI hoặc nhập tên">
       </div>
 
-      <!-- SĐT + nút tra cứu -->
       <div class="sdt-row">
         <div class="field">
           <label>Số điện thoại</label>
@@ -243,7 +243,6 @@
         <button class="lookup-btn" id="lookup-btn" onclick="lookupNhanVien()">🔍 Tra cứu</button>
       </div>
 
-      <!-- Kết quả tra cứu -->
       <div class="nv-card" id="nv-card">
         <div class="nv-card-header">
           <div class="nv-avatar">👤</div>
@@ -258,7 +257,7 @@
           <div class="nv-tag">📍 Văn phòng: <span id="nv-vanPhong">—</span></div>
         </div>
       </div>
-      <div class="nv-not-found" id="nv-not-found">⚠️ Không tìm thấy nhân viên với số điện thoại này</div>
+      <div class="nv-not-found" id="nv-not-found">⚠️ Không tìm thấy nhân viên với SĐT này</div>
 
       <div class="field">
         <label>Ghi chú (văn phòng làm việc)</label>
@@ -286,27 +285,26 @@
 <!-- SETTINGS PAGE -->
 <div id="page-settings" class="page">
   <div class="settings-section">
-    <h3>Kết nối Google Sheet</h3>
+    <h3>Google Cloud Vision</h3>
     <div class="setting-item">
-      <label>URL App Script (doGet)</label>
-      <input type="url" id="setting-url" placeholder="https://script.google.com/...">
+      <label>Vision API Key</label>
+      <input type="password" id="setting-vision-key" placeholder="AIza...">
     </div>
-    <div class="setting-item">
-      <label>URL App Script tra cứu nhân viên</label>
-      <input type="url" id="setting-lookup-url" placeholder="Có thể dùng cùng URL hoặc URL khác">
+    <div class="info-box">
+      Dùng để <strong>đọc chữ trên nhãn bưu kiện</strong> tự động.<br>
+      Miễn phí <strong>1.000 lần/tháng</strong>.<br>
+      Lấy key tại: Google Cloud Console → APIs & Services → Credentials
     </div>
-    <button class="btn btn-primary" onclick="saveSettings()" style="margin-bottom:8px;">💾 Lưu cài đặt</button>
-    <button class="btn btn-scan" onclick="testConnection()">🔗 Kiểm tra kết nối</button>
   </div>
 
   <div class="settings-section">
-    <h3>Hướng dẫn App Script tra cứu</h3>
-    <div class="info-box">
-      Thêm hàm <strong>doGet</strong> mới vào script xử lý cả 2 việc:<br>
-      1. Khi có <strong>?lookup=1&sdt=...</strong> → tra cứu nhân viên, trả JSON<br>
-      2. Khi có <strong>?maVanDon=...</strong> → lưu thư vào Sheet<br><br>
-      Copy code script mới từ Claude và triển khai lại là xong!
+    <h3>Kết nối Google Sheet</h3>
+    <div class="setting-item">
+      <label>URL App Script (lưu thư + tra cứu NV)</label>
+      <input type="url" id="setting-url" placeholder="https://script.google.com/...">
     </div>
+    <button class="btn btn-primary" onclick="saveSettings()" style="margin-bottom:8px;">💾 Lưu cài đặt</button>
+    <button class="btn btn-scan" onclick="testConnection()">🔗 Kiểm tra kết nối</button>
   </div>
 
   <div class="settings-section">
@@ -321,50 +319,42 @@
 <script>
 const URL_KEY = 'mailtrack_url';
 const HISTORY_KEY = 'mailtrack_history';
+const VISION_KEY = 'mailtrack_vision_key';
 
-let stream = null, scanning = false, animFrameId = null, currentBarcode = '';
-let nvData = null; // dữ liệu nhân viên tìm được
+let stream = null, scanning = false, animFrameId = null;
+let currentBarcode = '', nvData = null, currentPhotoB64 = null;
 
 document.addEventListener('DOMContentLoaded', () => {
-  updateDate();
-  loadSettings();
-  loadHistory();
-  setTodayDate();
+  updateDate(); loadSettings(); loadHistory(); setTodayDate();
 });
 
 function updateDate() {
   document.getElementById('date-display').textContent =
-    new Date().toLocaleDateString('vi-VN', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+    new Date().toLocaleDateString('vi-VN', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
 }
-
 function setTodayDate() {
   document.getElementById('f-ngayNhan').value = new Date().toISOString().split('T')[0];
 }
-
 function loadSettings() {
   const url = localStorage.getItem(URL_KEY) || 'https://script.google.com/macros/s/AKfycbwUZrwP5IHhDWywmsOnmnPTh2Fb6DHZXPuZc9F71-LDuvzhi8uczXz2hlA1cTYpailIGA/exec';
   document.getElementById('setting-url').value = url;
-  document.getElementById('setting-lookup-url').value = localStorage.getItem('mailtrack_lookup_url') || url;
   if (!localStorage.getItem(URL_KEY)) localStorage.setItem(URL_KEY, url);
+  const vk = localStorage.getItem(VISION_KEY) || '';
+  document.getElementById('setting-vision-key').value = vk;
 }
-
 function saveSettings() {
   const url = document.getElementById('setting-url').value.trim();
-  const lookupUrl = document.getElementById('setting-lookup-url').value.trim();
+  const vk = document.getElementById('setting-vision-key').value.trim();
   if (!url) { showToast('Vui lòng nhập URL!', 'error'); return; }
   localStorage.setItem(URL_KEY, url);
-  localStorage.setItem('mailtrack_lookup_url', lookupUrl || url);
+  if (vk) localStorage.setItem(VISION_KEY, vk);
   showToast('✅ Đã lưu!', 'success');
 }
-
 async function testConnection() {
   const url = localStorage.getItem(URL_KEY);
   if (!url) { showToast('Chưa có URL!', 'error'); return; }
-  showToast('Đang kiểm tra...', '');
-  try {
-    await fetch(url + '?test=1', { mode: 'no-cors' });
-    showToast('✅ Kết nối OK!', 'success');
-  } catch(e) { showToast('❌ Lỗi kết nối!', 'error'); }
+  try { await fetch(url + '?test=1', {mode:'no-cors'}); showToast('✅ Kết nối OK!', 'success'); }
+  catch(e) { showToast('❌ Lỗi kết nối!', 'error'); }
 }
 
 function switchTab(tab) {
@@ -374,22 +364,19 @@ function switchTab(tab) {
   if (tab !== 'scan' && scanning) stopCamera();
 }
 
-// Camera
+// Camera barcode
 async function toggleCamera() { scanning ? stopCamera() : await startCamera(); }
-
 async function startCamera() {
   try {
-    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});
     const video = document.getElementById('preview');
-    video.srcObject = stream;
-    await video.play();
+    video.srcObject = stream; await video.play();
     scanning = true;
     document.getElementById('start-btn').textContent = '⏹ Dừng quét';
     setStatus('scanning', 'Đang quét mã vạch...');
     requestAnimationFrame(scanFrame);
   } catch(e) { showToast('Không thể mở camera!', 'error'); }
 }
-
 function stopCamera() {
   if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
   scanning = false;
@@ -397,7 +384,6 @@ function stopCamera() {
   document.getElementById('start-btn').textContent = '📷 Bắt đầu quét';
   setStatus('idle', 'Camera đã tắt');
 }
-
 function scanFrame() {
   if (!scanning) return;
   const video = document.getElementById('preview');
@@ -411,68 +397,167 @@ function scanFrame() {
   }
   animFrameId = requestAnimationFrame(scanFrame);
 }
-
 function handleBarcodeFound(code) {
-  stopCamera();
-  setStatus('found', 'Đã quét: ' + code);
+  stopCamera(); setStatus('found', 'Đã quét: ' + code);
   fillForm(code);
   if (navigator.vibrate) navigator.vibrate(100);
   showToast('✅ Đã quét mã vạch!', 'success');
 }
-
 function fillForm(code) {
   currentBarcode = code;
   document.getElementById('barcode-display').textContent = code;
-  setTodayDate();
-  resetNvCard();
+  setTodayDate(); resetNvCard(); clearPhoto();
   document.getElementById('result-card').classList.add('show');
-  setTimeout(() => document.getElementById('result-card').scrollIntoView({ behavior:'smooth', block:'start' }), 100);
+  setTimeout(() => document.getElementById('result-card').scrollIntoView({behavior:'smooth',block:'start'}), 100);
 }
-
 function useManualCode() {
   const code = document.getElementById('manual-code').value.trim();
   if (!code) { showToast('Nhập mã vận đơn!', 'error'); return; }
-  fillForm(code);
-  document.getElementById('manual-code').value = '';
+  fillForm(code); document.getElementById('manual-code').value = '';
 }
 
-// Lookup nhân viên
+// Chụp nhãn AI
+function triggerPhoto() {
+  const vk = localStorage.getItem(VISION_KEY);
+  if (!vk) { showToast('Chưa cài Vision API Key trong Cài đặt!', 'error'); switchTab('settings'); return; }
+  document.getElementById('photo-input').click();
+}
+
+function processPhoto(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async (e) => {
+    const dataUrl = e.target.result;
+    currentPhotoB64 = dataUrl.split(',')[1];
+    // Hiện preview
+    document.getElementById('photo-preview-img').src = dataUrl;
+    document.getElementById('photo-preview-wrap').classList.add('show');
+    // Gọi Vision API
+    await callVisionOCR(currentPhotoB64);
+  };
+  reader.readAsDataURL(file);
+  event.target.value = '';
+}
+
+async function callVisionOCR(b64) {
+  const btn = document.getElementById('photo-btn');
+  btn.classList.add('loading');
+  btn.textContent = '⏳ Đang đọc nhãn...';
+
+  const vk = localStorage.getItem(VISION_KEY);
+  try {
+    const res = await fetch('https://vision.googleapis.com/v1/images:annotate?key=' + vk, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        requests: [{
+          image: {content: b64},
+          features: [{type: 'TEXT_DETECTION', maxResults: 1}]
+        }]
+      })
+    });
+    const data = await res.json();
+    const fullText = data.responses?.[0]?.fullTextAnnotation?.text || '';
+    if (!fullText) { showToast('Không đọc được chữ trên ảnh', 'error'); return; }
+
+    // Parse thông tin từ text
+    parseAndFillFromOCR(fullText);
+  } catch(e) {
+    showToast('Lỗi đọc ảnh: ' + e.message, 'error');
+  } finally {
+    btn.classList.remove('loading');
+    btn.textContent = '📸 Chụp lại';
+  }
+}
+
+function parseAndFillFromOCR(text) {
+  const lines = text.split('\n').map(l => l.trim()).filter(l => l.length > 1);
+
+  // Hiện raw text để user xem
+  document.getElementById('ocr-text').textContent = lines.join(' | ');
+  document.getElementById('ocr-result').classList.add('show');
+
+  // Tìm SĐT (10 số bắt đầu bằng 0)
+  const phoneMatch = text.match(/\b(0[3-9]\d{8})\b/g);
+  // Tìm tên người nhận - thường sau "Đến:", "Người nhận:", "To:", "Kính gửi:"
+  const receiverPatterns = [
+    /(?:người nhận|kính gửi|đến|to|receiver|gửi đến)[:\s]+([^\n,]+)/i,
+    /(?:họ tên|tên)[:\s]+([^\n,]+)/i,
+  ];
+  const senderPatterns = [
+    /(?:người gửi|từ|from|sender)[:\s]+([^\n,]+)/i,
+  ];
+
+  let receiverName = '', senderName = '', phone = '';
+
+  for (const pat of receiverPatterns) {
+    const m = text.match(pat);
+    if (m) { receiverName = m[1].trim(); break; }
+  }
+  for (const pat of senderPatterns) {
+    const m = text.match(pat);
+    if (m) { senderName = m[1].trim(); break; }
+  }
+  if (phoneMatch && phoneMatch.length > 0) {
+    // SĐT đầu tiên thường là người nhận
+    phone = phoneMatch[0];
+  }
+
+  // Điền vào form nếu tìm được
+  if (receiverName) document.getElementById('f-nguoiNhan').value = receiverName;
+  if (senderName) document.getElementById('f-nguoiGui').value = senderName;
+  if (phone) {
+    document.getElementById('f-soDienThoai').value = phone;
+    // Tự tra cứu nhân viên
+    setTimeout(() => lookupNhanVien(), 300);
+  }
+
+  const filled = [receiverName && 'người nhận', senderName && 'người gửi', phone && 'SĐT'].filter(Boolean);
+  if (filled.length > 0) {
+    showToast('✅ Đã điền: ' + filled.join(', '), 'success');
+  } else {
+    showToast('⚠️ Không nhận diện được tên/SĐT, kiểm tra lại ảnh', 'error');
+  }
+}
+
+function clearPhoto() {
+  document.getElementById('photo-preview-wrap').classList.remove('show');
+  document.getElementById('ocr-result').classList.remove('show');
+  document.getElementById('photo-preview-img').src = '';
+  document.getElementById('photo-btn').textContent = '📸 Chụp nhãn bưu kiện';
+  currentPhotoB64 = null;
+}
+
+// Tra cứu NV
 let lookupTimeout = null;
 function onSdtInput() {
-  resetNvCard();
-  clearTimeout(lookupTimeout);
+  resetNvCard(); clearTimeout(lookupTimeout);
   const sdt = document.getElementById('f-soDienThoai').value.trim();
-  if (sdt.length >= 9) {
-    lookupTimeout = setTimeout(() => lookupNhanVien(), 800);
-  }
+  if (sdt.length >= 9) lookupTimeout = setTimeout(() => lookupNhanVien(), 800);
 }
 
 async function lookupNhanVien() {
   const sdt = document.getElementById('f-soDienThoai').value.trim();
   if (!sdt) { showToast('Nhập số điện thoại trước!', 'error'); return; }
-
-  const lookupUrl = localStorage.getItem('mailtrack_lookup_url') || localStorage.getItem(URL_KEY);
-  if (!lookupUrl) { showToast('Chưa cài URL trong Cài đặt!', 'error'); return; }
+  const url = localStorage.getItem(URL_KEY);
+  if (!url) { showToast('Chưa cài URL!', 'error'); return; }
 
   const btn = document.getElementById('lookup-btn');
-  btn.classList.add('loading');
-  btn.textContent = '⏳';
+  btn.classList.add('loading'); btn.textContent = '⏳';
   resetNvCard();
 
   try {
-    const res = await fetch(lookupUrl + '?lookup=1&sdt=' + encodeURIComponent(sdt));
+    const res = await fetch(url + '?lookup=1&sdt=' + encodeURIComponent(sdt));
     const data = await res.json();
-
     if (data.status === 'found') {
       nvData = data;
-      // Hiện card nhân viên
       document.getElementById('nv-name').textContent = data.ten || '—';
       document.getElementById('nv-chucDanh').textContent = data.chucDanh || '—';
       document.getElementById('nv-phongBan').textContent = data.phongBan || '—';
       document.getElementById('nv-boPhan').textContent = data.boPhan || '—';
       document.getElementById('nv-vanPhong').textContent = data.vanPhong || '—';
       document.getElementById('nv-card').classList.add('show');
-      // Tự điền tên và văn phòng
       if (data.ten) document.getElementById('f-nguoiNhan').value = data.ten;
       if (data.vanPhong) document.getElementById('f-ghiChu').value = data.vanPhong;
       showToast('✅ Tìm thấy nhân viên!', 'success');
@@ -481,27 +566,24 @@ async function lookupNhanVien() {
       nvData = null;
     }
   } catch(e) {
-    // Nếu script chưa hỗ trợ lookup, báo lỗi nhẹ
-    document.getElementById('nv-not-found').textContent = '⚠️ Script chưa hỗ trợ tra cứu. Xem hướng dẫn trong Cài đặt.';
+    document.getElementById('nv-not-found').textContent = '⚠️ Script chưa hỗ trợ tra cứu. Xem Cài đặt.';
     document.getElementById('nv-not-found').classList.add('show');
-    nvData = null;
   } finally {
-    btn.classList.remove('loading');
-    btn.textContent = '🔍 Tra cứu';
+    btn.classList.remove('loading'); btn.textContent = '🔍 Tra cứu';
   }
 }
 
 function resetNvCard() {
   document.getElementById('nv-card').classList.remove('show');
   document.getElementById('nv-not-found').classList.remove('show');
-  document.getElementById('nv-not-found').textContent = '⚠️ Không tìm thấy nhân viên với số điện thoại này';
+  document.getElementById('nv-not-found').textContent = '⚠️ Không tìm thấy nhân viên với SĐT này';
   nvData = null;
 }
 
 // Submit
 async function submitData() {
   const url = localStorage.getItem(URL_KEY);
-  if (!url) { showToast('Chưa cài URL trong Cài đặt!', 'error'); switchTab('settings'); return; }
+  if (!url) { showToast('Chưa cài URL!', 'error'); switchTab('settings'); return; }
   if (!currentBarcode) { showToast('Chưa có mã vận đơn!', 'error'); return; }
 
   const btn = document.getElementById('submit-btn');
@@ -515,18 +597,17 @@ async function submitData() {
     nguoiGui:    document.getElementById('f-nguoiGui').value.trim(),
     nguoiNhan:   document.getElementById('f-nguoiNhan').value.trim(),
     soDienThoai: document.getElementById('f-soDienThoai').value.trim(),
-    phongBan:    nvData ? (nvData.phongBan || '') : '',
-    boPhan:      nvData ? (nvData.boPhan || '') : '',
-    chucDanh:    nvData ? (nvData.chucDanh || '') : '',
+    phongBan:    nvData ? (nvData.phongBan||'') : '',
+    boPhan:      nvData ? (nvData.boPhan||'') : '',
+    chucDanh:    nvData ? (nvData.chucDanh||'') : '',
     ghiChu:      document.getElementById('f-ghiChu').value.trim(),
   };
 
-  const entry = { ...data, submitStatus:'pending', id:Date.now(), timestamp:new Date().toLocaleString('vi-VN') };
+  const entry = {...data, submitStatus:'pending', id:Date.now(), timestamp:new Date().toLocaleString('vi-VN')};
   saveToHistory(entry);
 
   try {
-    const qs = new URLSearchParams(data).toString();
-    await fetch(url + '?' + qs, { method:'GET', mode:'no-cors' });
+    await fetch(url + '?' + new URLSearchParams(data).toString(), {method:'GET', mode:'no-cors'});
     entry.submitStatus = 'success';
     updateHistoryEntry(entry);
     showToast('✅ Đã lưu vào Google Sheet!', 'success');
@@ -545,56 +626,32 @@ async function submitData() {
 function resetForm() {
   currentBarcode = ''; nvData = null;
   document.getElementById('result-card').classList.remove('show');
-  ['f-nguoiGui','f-nguoiNhan','f-soDienThoai','f-ghiChu'].forEach(id => document.getElementById(id).value = '');
+  ['f-nguoiGui','f-nguoiNhan','f-soDienThoai','f-ghiChu'].forEach(id => document.getElementById(id).value='');
   document.getElementById('barcode-display').textContent = '—';
-  resetNvCard();
-  setTodayDate();
+  resetNvCard(); clearPhoto(); setTodayDate();
   setStatus('idle', 'Nhấn "Bắt đầu quét" để mở camera');
 }
+function setStatus(s,t) { document.getElementById('status-dot').className='status-dot '+s; document.getElementById('status-text').textContent=t; }
 
-function setStatus(state, text) {
-  document.getElementById('status-dot').className = 'status-dot ' + state;
-  document.getElementById('status-text').textContent = text;
-}
-
-function saveToHistory(entry) {
-  const h = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
-  h.unshift(entry); if (h.length > 100) h.pop();
-  localStorage.setItem(HISTORY_KEY, JSON.stringify(h));
-}
-function updateHistoryEntry(entry) {
-  const h = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
-  const idx = h.findIndex(i => i.id === entry.id);
-  if (idx >= 0) { h[idx] = entry; localStorage.setItem(HISTORY_KEY, JSON.stringify(h)); }
-}
+function saveToHistory(e) { const h=JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]'); h.unshift(e); if(h.length>100)h.pop(); localStorage.setItem(HISTORY_KEY,JSON.stringify(h)); }
+function updateHistoryEntry(e) { const h=JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]'); const i=h.findIndex(x=>x.id===e.id); if(i>=0){h[i]=e;localStorage.setItem(HISTORY_KEY,JSON.stringify(h));} }
 function loadHistory() {
-  const h = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
-  document.getElementById('history-count').textContent = h.length;
-  const list = document.getElementById('history-list');
-  if (!h.length) { list.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>Chưa có dữ liệu nào</p></div>'; return; }
-  list.innerHTML = h.slice(0,50).map(e => `
+  const h=JSON.parse(localStorage.getItem(HISTORY_KEY)||'[]');
+  document.getElementById('history-count').textContent=h.length;
+  const list=document.getElementById('history-list');
+  if(!h.length){list.innerHTML='<div class="empty-state"><div class="icon">📭</div><p>Chưa có dữ liệu nào</p></div>';return;}
+  list.innerHTML=h.slice(0,50).map(e=>`
     <div class="history-item ${e.submitStatus}">
-      <div class="hi-top">
-        <span class="hi-barcode">${e.maVanDon}</span>
-        <span class="hi-time">${e.ngayNhan||''}</span>
-      </div>
+      <div class="hi-top"><span class="hi-barcode">${e.maVanDon}</span><span class="hi-time">${e.ngayNhan||''}</span></div>
       <div class="hi-row">👤 ${e.nguoiNhan||'Chưa rõ'} ${e.soDienThoai?'· 📞 '+e.soDienThoai:''}</div>
+      ${e.nguoiGui?`<div class="hi-row">📦 Từ: ${e.nguoiGui}</div>`:''}
       ${e.phongBan?`<div class="hi-row">🏢 ${e.phongBan}${e.boPhan?' · '+e.boPhan:''}</div>`:''}
       ${e.ghiChu?`<div class="hi-row">📍 ${e.ghiChu}</div>`:''}
-      <span class="hi-status ${e.submitStatus==='success'?'ok':'fail'}">
-        ${e.submitStatus==='success'?'✓ Đã lưu Sheet':e.submitStatus==='pending'?'⏳ Đang xử lý':'✗ Lỗi kết nối'}
-      </span>
-    </div>
-  `).join('');
+      <span class="hi-status ${e.submitStatus==='success'?'ok':'fail'}">${e.submitStatus==='success'?'✓ Đã lưu Sheet':e.submitStatus==='pending'?'⏳ Đang xử lý':'✗ Lỗi'}</span>
+    </div>`).join('');
 }
-function clearHistory() {
-  if (confirm('Xóa toàn bộ lịch sử?')) { localStorage.removeItem(HISTORY_KEY); loadHistory(); showToast('Đã xóa!','success'); }
-}
-function showToast(msg, type) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.className = 'toast show '+(type||'');
-  setTimeout(() => t.classList.remove('show'), 3000);
-}
+function clearHistory() { if(confirm('Xóa toàn bộ?')){localStorage.removeItem(HISTORY_KEY);loadHistory();showToast('Đã xóa!','success');} }
+function showToast(msg,type) { const t=document.getElementById('toast'); t.textContent=msg; t.className='toast show '+(type||''); setTimeout(()=>t.classList.remove('show'),3000); }
 </script>
 </body>
 </html>
