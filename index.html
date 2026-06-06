@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#1a1a2e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Thư Từ">
+<title>Quản Lý Thư Từ</title>
+<style>
+  :root {
+    --bg: #0f0f1a;
+    --surface: #1a1a2e;
+    --surface2: #16213e;
+    --accent: #e94560;
+    --text: #eaeaea;
+    --text-muted: #8892b0;
+    --success: #64ffda;
+    --warning: #ffd166;
+    --border: rgba(255,255,255,0.08);
+    --font: 'Segoe UI', system-ui, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  body { background: var(--bg); color: var(--text); font-family: var(--font); min-height: 100vh; overflow-x: hidden; }
+
+  .header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 20px; display: flex; align-items: center; gap: 12px; position: sticky; top: 0; z-index: 100; }
+  .header-icon { width: 40px; height: 40px; background: var(--accent); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .header h1 { font-size: 18px; font-weight: 600; }
+  .header p { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
+
+  .tabs { display: flex; background: var(--surface); border-bottom: 1px solid var(--border); padding: 0 12px; }
+  .tab { flex: 1; padding: 12px 8px; font-size: 13px; color: var(--text-muted); background: none; border: none; border-bottom: 2px solid transparent; cursor: pointer; transition: all 0.2s; font-family: var(--font); }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  .page { display: none; padding: 16px; }
+  .page.active { display: block; }
+
+  .scanner-box { background: var(--surface); border-radius: 20px; overflow: hidden; border: 1px solid var(--border); margin-bottom: 16px; }
+  #preview-container { position: relative; width: 100%; aspect-ratio: 1; background: #000; overflow: hidden; }
+  #preview { width: 100%; height: 100%; object-fit: cover; }
+  .scan-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+  .scan-frame { width: 60%; aspect-ratio: 1; border: 2px solid var(--accent); border-radius: 16px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.45); position: relative; }
+  .scan-line { position: absolute; left: 0; right: 0; height: 2px; background: var(--accent); animation: scanline 2s ease-in-out infinite; box-shadow: 0 0 8px var(--accent); }
+  @keyframes scanline { 0% { top: 10%; } 50% { top: 85%; } 100% { top: 10%; } }
+  .scan-corner { position: absolute; width: 16px; height: 16px; border-color: var(--success); border-style: solid; border-width: 0; }
+  .scan-corner.tl { top:-2px; left:-2px; border-top-width:3px; border-left-width:3px; border-radius:6px 0 0 0; }
+  .scan-corner.tr { top:-2px; right:-2px; border-top-width:3px; border-right-width:3px; border-radius:0 6px 0 0; }
+  .scan-corner.bl { bottom:-2px; left:-2px; border-bottom-width:3px; border-left-width:3px; border-radius:0 0 0 6px; }
+  .scan-corner.br { bottom:-2px; right:-2px; border-bottom-width:3px; border-right-width:3px; border-radius:0 0 6px 0; }
+
+  .scanner-status { padding: 14px 16px; display: flex; align-items: center; gap: 10px; border-top: 1px solid var(--border); }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--text-muted); flex-shrink: 0; }
+  .status-dot.scanning { background: var(--accent); animation: pulse 1s infinite; }
+  .status-dot.found { background: var(--success); }
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+  #status-text { font-size: 13px; color: var(--text-muted); }
+
+  .result-card { background: var(--surface2); border-radius: 16px; padding: 16px; border: 1px solid var(--border); margin-bottom: 16px; display: none; }
+  .result-card.show { display: block; }
+  .barcode-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 4px; }
+  .barcode-value { font-size: 20px; font-weight: 700; color: var(--success); letter-spacing: 2px; margin-bottom: 16px; word-break: break-all; }
+
+  .section-title { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; margin-top: 4px; }
+
+  .form-grid { display: flex; flex-direction: column; gap: 10px; }
+  .form-row { display: flex; gap: 10px; }
+  .form-row .field { flex: 1; min-width: 0; }
+  .field label { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; display: block; }
+  .field input, .field select {
+    width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+    border-radius: 10px; padding: 10px 12px; color: var(--text); font-size: 14px;
+    font-family: var(--font); outline: none; transition: border-color 0.2s;
+  }
+  .field input:focus, .field select:focus { border-color: var(--accent); }
+  .field select option { background: var(--surface2); }
+  .field input:read-only { opacity: 0.6; cursor: default; }
+
+  /* Info card hiện sau khi tra SĐT */
+  .nv-card {
+    background: rgba(100,255,218,0.05);
+    border: 1px solid rgba(100,255,218,0.2);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: none;
+    gap: 8px;
+    flex-direction: column;
+  }
+  .nv-card.show { display: flex; }
+  .nv-card-header { display: flex; align-items: center; gap: 8px; }
+  .nv-avatar { width: 36px; height: 36px; border-radius: 50%; background: rgba(100,255,218,0.15); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .nv-name { font-size: 14px; font-weight: 600; color: var(--success); }
+  .nv-sub { font-size: 12px; color: var(--text-muted); }
+  .nv-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .nv-tag { background: rgba(255,255,255,0.07); border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 12px; color: var(--text-muted); }
+  .nv-tag span { color: var(--text); font-weight: 500; }
+
+  .nv-not-found {
+    background: rgba(233,69,96,0.05);
+    border: 1px solid rgba(233,69,96,0.2);
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--accent);
+    display: none;
+  }
+  .nv-not-found.show { display: block; }
+
+  .sdt-row { display: flex; gap: 8px; align-items: flex-end; }
+  .sdt-row .field { flex: 1; }
+  .lookup-btn { padding: 10px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-size: 13px; cursor: pointer; font-family: var(--font); white-space: nowrap; transition: all 0.2s; flex-shrink: 0; }
+  .lookup-btn:active { transform: scale(0.96); }
+  .lookup-btn.loading { opacity: 0.6; pointer-events: none; }
+
+  .btn { width: 100%; padding: 14px; border-radius: 14px; border: none; font-size: 15px; font-weight: 600; cursor: pointer; font-family: var(--font); transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-primary { background: var(--accent); color: #fff; }
+  .btn-primary:active { transform: scale(0.97); }
+  .btn-scan { background: var(--surface); color: var(--text); border: 1px solid var(--border); margin-bottom: 10px; }
+  .btn-scan:active { transform: scale(0.97); }
+
+  .divider { display: flex; align-items: center; gap: 10px; margin: 12px 0; }
+  .divider::before, .divider::after { content:''; flex:1; height:1px; background:var(--border); }
+  .divider span { font-size: 12px; color: var(--text-muted); }
+
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--surface2); border: 1px solid var(--border); color: var(--text); padding: 12px 20px; border-radius: 12px; font-size: 14px; z-index: 9999; transition: transform 0.3s ease; white-space: nowrap; box-shadow: 0 8px 32px rgba(0,0,0,0.4); max-width: 90vw; text-align: center; }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.success { border-color: var(--success); color: var(--success); }
+  .toast.error { border-color: var(--accent); color: var(--accent); }
+
+  .history-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .history-header h2 { font-size: 16px; font-weight: 600; }
+  .badge { background: var(--accent); color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 6px; font-weight: 600; }
+  .history-item { background: var(--surface); border-radius: 14px; padding: 14px 16px; margin-bottom: 10px; border: 1px solid var(--border); border-left: 3px solid var(--accent); }
+  .history-item.success { border-left-color: var(--success); }
+  .hi-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+  .hi-barcode { font-size: 14px; font-weight: 600; letter-spacing: 1px; color: var(--success); }
+  .hi-time { font-size: 11px; color: var(--text-muted); }
+  .hi-row { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+  .hi-status { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; margin-top: 8px; padding: 3px 8px; border-radius: 6px; }
+  .hi-status.ok { background: rgba(100,255,218,0.1); color: var(--success); }
+  .hi-status.fail { background: rgba(233,69,96,0.1); color: var(--accent); }
+
+  .settings-section { margin-bottom: 24px; }
+  .settings-section h3 { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; padding-left: 4px; }
+  .setting-item { background: var(--surface); border-radius: 12px; padding: 14px 16px; border: 1px solid var(--border); margin-bottom: 8px; }
+  .setting-item label { font-size: 13px; color: var(--text-muted); margin-bottom: 6px; display: block; }
+  .setting-item input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; padding: 9px 12px; color: var(--text); font-size: 13px; font-family: var(--font); outline: none; }
+  .setting-item input:focus { border-color: var(--accent); }
+  .info-box { background: rgba(100,255,218,0.05); border: 1px solid rgba(100,255,218,0.2); border-radius: 12px; padding: 14px 16px; font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+  .info-box strong { color: var(--success); }
+
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); }
+  .empty-state .icon { font-size: 40px; margin-bottom: 12px; }
+  .loading-spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-icon">📬</div>
+  <div>
+    <h1>Quản Lý Thư Từ</h1>
+    <p id="date-display"></p>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('scan')">📷 Quét mã</button>
+  <button class="tab" onclick="switchTab('history')">📋 Lịch sử</button>
+  <button class="tab" onclick="switchTab('settings')">⚙️ Cài đặt</button>
+</div>
+
+<!-- SCAN PAGE -->
+<div id="page-scan" class="page active">
+  <div class="scanner-box">
+    <div id="preview-container">
+      <video id="preview" autoplay playsinline muted></video>
+      <div class="scan-overlay">
+        <div class="scan-frame">
+          <div class="scan-line"></div>
+          <div class="scan-corner tl"></div><div class="scan-corner tr"></div>
+          <div class="scan-corner bl"></div><div class="scan-corner br"></div>
+        </div>
+      </div>
+    </div>
+    <div class="scanner-status">
+      <div class="status-dot" id="status-dot"></div>
+      <span id="status-text">Nhấn "Bắt đầu quét" để mở camera</span>
+    </div>
+  </div>
+
+  <button class="btn btn-scan" id="start-btn" onclick="toggleCamera()">📷 Bắt đầu quét</button>
+
+  <div class="divider"><span>hoặc nhập thủ công</span></div>
+
+  <div style="display:flex;gap:8px;margin-bottom:16px;">
+    <input type="text" id="manual-code" placeholder="Nhập mã vận đơn..." style="flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:11px 14px;color:#eaeaea;font-size:14px;outline:none;font-family:inherit;">
+    <button class="btn btn-primary" style="width:auto;padding:11px 16px;border-radius:10px;" onclick="useManualCode()">OK</button>
+  </div>
+
+  <div class="result-card" id="result-card">
+    <div class="barcode-label">Mã vận đơn</div>
+    <div class="barcode-value" id="barcode-display">—</div>
+
+    <div class="form-grid">
+
+      <div class="section-title">📅 Thông tin nhận</div>
+      <div class="form-row">
+        <div class="field">
+          <label>Ngày nhận</label>
+          <input type="date" id="f-ngayNhan">
+        </div>
+        <div class="field">
+          <label>Trạng thái</label>
+          <select id="f-trangThai">
+            <option value="Đã nhận">Đã nhận</option>
+            <option value="Đang chờ xử lý">Đang chờ</option>
+            <option value="Đã chuyển">Đã chuyển</option>
+            <option value="Đã trả lại">Đã trả lại</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section-title">📦 Người gửi</div>
+      <div class="field">
+        <label>Người gửi</label>
+        <input type="text" id="f-nguoiGui" placeholder="Tên / địa chỉ người gửi">
+      </div>
+
+      <div class="section-title">👤 Người nhận</div>
+      <div class="field">
+        <label>Tên người nhận</label>
+        <input type="text" id="f-nguoiNhan" placeholder="Nhập tên...">
+      </div>
+
+      <!-- SĐT + nút tra cứu -->
+      <div class="sdt-row">
+        <div class="field">
+          <label>Số điện thoại</label>
+          <input type="tel" id="f-soDienThoai" placeholder="0xxx..." oninput="onSdtInput()">
+        </div>
+        <button class="lookup-btn" id="lookup-btn" onclick="lookupNhanVien()">🔍 Tra cứu</button>
+      </div>
+
+      <!-- Kết quả tra cứu -->
+      <div class="nv-card" id="nv-card">
+        <div class="nv-card-header">
+          <div class="nv-avatar">👤</div>
+          <div>
+            <div class="nv-name" id="nv-name">—</div>
+            <div class="nv-sub" id="nv-chucDanh">—</div>
+          </div>
+        </div>
+        <div class="nv-tags">
+          <div class="nv-tag">🏢 Phòng ban: <span id="nv-phongBan">—</span></div>
+          <div class="nv-tag">🗂 Bộ phận: <span id="nv-boPhan">—</span></div>
+          <div class="nv-tag">📍 Văn phòng: <span id="nv-vanPhong">—</span></div>
+        </div>
+      </div>
+      <div class="nv-not-found" id="nv-not-found">⚠️ Không tìm thấy nhân viên với số điện thoại này</div>
+
+      <div class="field">
+        <label>Ghi chú (văn phòng làm việc)</label>
+        <input type="text" id="f-ghiChu" placeholder="Tự điền khi tra cứu...">
+      </div>
+
+      <button class="btn btn-primary" id="submit-btn" onclick="submitData()">
+        <span>💾 Lưu vào Google Sheet</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORY PAGE -->
+<div id="page-history" class="page">
+  <div class="history-header">
+    <h2>Lịch sử gần đây</h2>
+    <span class="badge" id="history-count">0</span>
+  </div>
+  <div id="history-list">
+    <div class="empty-state"><div class="icon">📭</div><p>Chưa có dữ liệu nào</p></div>
+  </div>
+</div>
+
+<!-- SETTINGS PAGE -->
+<div id="page-settings" class="page">
+  <div class="settings-section">
+    <h3>Kết nối Google Sheet</h3>
+    <div class="setting-item">
+      <label>URL App Script (doGet)</label>
+      <input type="url" id="setting-url" placeholder="https://script.google.com/...">
+    </div>
+    <div class="setting-item">
+      <label>URL App Script tra cứu nhân viên</label>
+      <input type="url" id="setting-lookup-url" placeholder="Có thể dùng cùng URL hoặc URL khác">
+    </div>
+    <button class="btn btn-primary" onclick="saveSettings()" style="margin-bottom:8px;">💾 Lưu cài đặt</button>
+    <button class="btn btn-scan" onclick="testConnection()">🔗 Kiểm tra kết nối</button>
+  </div>
+
+  <div class="settings-section">
+    <h3>Hướng dẫn App Script tra cứu</h3>
+    <div class="info-box">
+      Thêm hàm <strong>doGet</strong> mới vào script xử lý cả 2 việc:<br>
+      1. Khi có <strong>?lookup=1&sdt=...</strong> → tra cứu nhân viên, trả JSON<br>
+      2. Khi có <strong>?maVanDon=...</strong> → lưu thư vào Sheet<br><br>
+      Copy code script mới từ Claude và triển khai lại là xong!
+    </div>
+  </div>
+
+  <div class="settings-section">
+    <h3>Dữ liệu</h3>
+    <button class="btn btn-scan" onclick="clearHistory()">🗑 Xóa lịch sử local</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script>
+const URL_KEY = 'mailtrack_url';
+const HISTORY_KEY = 'mailtrack_history';
+
+let stream = null, scanning = false, animFrameId = null, currentBarcode = '';
+let nvData = null; // dữ liệu nhân viên tìm được
+
+document.addEventListener('DOMContentLoaded', () => {
+  updateDate();
+  loadSettings();
+  loadHistory();
+  setTodayDate();
+});
+
+function updateDate() {
+  document.getElementById('date-display').textContent =
+    new Date().toLocaleDateString('vi-VN', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+}
+
+function setTodayDate() {
+  document.getElementById('f-ngayNhan').value = new Date().toISOString().split('T')[0];
+}
+
+function loadSettings() {
+  const url = localStorage.getItem(URL_KEY) || 'https://script.google.com/macros/s/AKfycbwUZrwP5IHhDWywmsOnmnPTh2Fb6DHZXPuZc9F71-LDuvzhi8uczXz2hlA1cTYpailIGA/exec';
+  document.getElementById('setting-url').value = url;
+  document.getElementById('setting-lookup-url').value = localStorage.getItem('mailtrack_lookup_url') || url;
+  if (!localStorage.getItem(URL_KEY)) localStorage.setItem(URL_KEY, url);
+}
+
+function saveSettings() {
+  const url = document.getElementById('setting-url').value.trim();
+  const lookupUrl = document.getElementById('setting-lookup-url').value.trim();
+  if (!url) { showToast('Vui lòng nhập URL!', 'error'); return; }
+  localStorage.setItem(URL_KEY, url);
+  localStorage.setItem('mailtrack_lookup_url', lookupUrl || url);
+  showToast('✅ Đã lưu!', 'success');
+}
+
+async function testConnection() {
+  const url = localStorage.getItem(URL_KEY);
+  if (!url) { showToast('Chưa có URL!', 'error'); return; }
+  showToast('Đang kiểm tra...', '');
+  try {
+    await fetch(url + '?test=1', { mode: 'no-cors' });
+    showToast('✅ Kết nối OK!', 'success');
+  } catch(e) { showToast('❌ Lỗi kết nối!', 'error'); }
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', ['scan','history','settings'][i] === tab));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + tab).classList.add('active');
+  if (tab !== 'scan' && scanning) stopCamera();
+}
+
+// Camera
+async function toggleCamera() { scanning ? stopCamera() : await startCamera(); }
+
+async function startCamera() {
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    const video = document.getElementById('preview');
+    video.srcObject = stream;
+    await video.play();
+    scanning = true;
+    document.getElementById('start-btn').textContent = '⏹ Dừng quét';
+    setStatus('scanning', 'Đang quét mã vạch...');
+    requestAnimationFrame(scanFrame);
+  } catch(e) { showToast('Không thể mở camera!', 'error'); }
+}
+
+function stopCamera() {
+  if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+  scanning = false;
+  if (animFrameId) cancelAnimationFrame(animFrameId);
+  document.getElementById('start-btn').textContent = '📷 Bắt đầu quét';
+  setStatus('idle', 'Camera đã tắt');
+}
+
+function scanFrame() {
+  if (!scanning) return;
+  const video = document.getElementById('preview');
+  if (video.readyState === video.HAVE_ENOUGH_DATA) {
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    const img = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height);
+    const code = jsQR(img.data, img.width, img.height);
+    if (code && code.data) { handleBarcodeFound(code.data); return; }
+  }
+  animFrameId = requestAnimationFrame(scanFrame);
+}
+
+function handleBarcodeFound(code) {
+  stopCamera();
+  setStatus('found', 'Đã quét: ' + code);
+  fillForm(code);
+  if (navigator.vibrate) navigator.vibrate(100);
+  showToast('✅ Đã quét mã vạch!', 'success');
+}
+
+function fillForm(code) {
+  currentBarcode = code;
+  document.getElementById('barcode-display').textContent = code;
+  setTodayDate();
+  resetNvCard();
+  document.getElementById('result-card').classList.add('show');
+  setTimeout(() => document.getElementById('result-card').scrollIntoView({ behavior:'smooth', block:'start' }), 100);
+}
+
+function useManualCode() {
+  const code = document.getElementById('manual-code').value.trim();
+  if (!code) { showToast('Nhập mã vận đơn!', 'error'); return; }
+  fillForm(code);
+  document.getElementById('manual-code').value = '';
+}
+
+// Lookup nhân viên
+let lookupTimeout = null;
+function onSdtInput() {
+  resetNvCard();
+  clearTimeout(lookupTimeout);
+  const sdt = document.getElementById('f-soDienThoai').value.trim();
+  if (sdt.length >= 9) {
+    lookupTimeout = setTimeout(() => lookupNhanVien(), 800);
+  }
+}
+
+async function lookupNhanVien() {
+  const sdt = document.getElementById('f-soDienThoai').value.trim();
+  if (!sdt) { showToast('Nhập số điện thoại trước!', 'error'); return; }
+
+  const lookupUrl = localStorage.getItem('mailtrack_lookup_url') || localStorage.getItem(URL_KEY);
+  if (!lookupUrl) { showToast('Chưa cài URL trong Cài đặt!', 'error'); return; }
+
+  const btn = document.getElementById('lookup-btn');
+  btn.classList.add('loading');
+  btn.textContent = '⏳';
+  resetNvCard();
+
+  try {
+    const res = await fetch(lookupUrl + '?lookup=1&sdt=' + encodeURIComponent(sdt));
+    const data = await res.json();
+
+    if (data.status === 'found') {
+      nvData = data;
+      // Hiện card nhân viên
+      document.getElementById('nv-name').textContent = data.ten || '—';
+      document.getElementById('nv-chucDanh').textContent = data.chucDanh || '—';
+      document.getElementById('nv-phongBan').textContent = data.phongBan || '—';
+      document.getElementById('nv-boPhan').textContent = data.boPhan || '—';
+      document.getElementById('nv-vanPhong').textContent = data.vanPhong || '—';
+      document.getElementById('nv-card').classList.add('show');
+      // Tự điền tên và văn phòng
+      if (data.ten) document.getElementById('f-nguoiNhan').value = data.ten;
+      if (data.vanPhong) document.getElementById('f-ghiChu').value = data.vanPhong;
+      showToast('✅ Tìm thấy nhân viên!', 'success');
+    } else {
+      document.getElementById('nv-not-found').classList.add('show');
+      nvData = null;
+    }
+  } catch(e) {
+    // Nếu script chưa hỗ trợ lookup, báo lỗi nhẹ
+    document.getElementById('nv-not-found').textContent = '⚠️ Script chưa hỗ trợ tra cứu. Xem hướng dẫn trong Cài đặt.';
+    document.getElementById('nv-not-found').classList.add('show');
+    nvData = null;
+  } finally {
+    btn.classList.remove('loading');
+    btn.textContent = '🔍 Tra cứu';
+  }
+}
+
+function resetNvCard() {
+  document.getElementById('nv-card').classList.remove('show');
+  document.getElementById('nv-not-found').classList.remove('show');
+  document.getElementById('nv-not-found').textContent = '⚠️ Không tìm thấy nhân viên với số điện thoại này';
+  nvData = null;
+}
+
+// Submit
+async function submitData() {
+  const url = localStorage.getItem(URL_KEY);
+  if (!url) { showToast('Chưa cài URL trong Cài đặt!', 'error'); switchTab('settings'); return; }
+  if (!currentBarcode) { showToast('Chưa có mã vận đơn!', 'error'); return; }
+
+  const btn = document.getElementById('submit-btn');
+  btn.innerHTML = '<div class="loading-spinner"></div> Đang lưu...';
+  btn.disabled = true;
+
+  const ngayNhan = document.getElementById('f-ngayNhan').value;
+  const data = {
+    maVanDon:    currentBarcode,
+    ngayNhan:    ngayNhan ? new Date(ngayNhan).toLocaleDateString('vi-VN') : new Date().toLocaleDateString('vi-VN'),
+    nguoiGui:    document.getElementById('f-nguoiGui').value.trim(),
+    nguoiNhan:   document.getElementById('f-nguoiNhan').value.trim(),
+    soDienThoai: document.getElementById('f-soDienThoai').value.trim(),
+    phongBan:    nvData ? (nvData.phongBan || '') : '',
+    boPhan:      nvData ? (nvData.boPhan || '') : '',
+    chucDanh:    nvData ? (nvData.chucDanh || '') : '',
+    ghiChu:      document.getElementById('f-ghiChu').value.trim(),
+  };
+
+  const entry = { ...data, submitStatus:'pending', id:Date.now(), timestamp:new Date().toLocaleString('vi-VN') };
+  saveToHistory(entry);
+
+  try {
+    const qs = new URLSearchParams(data).toString();
+    await fetch(url + '?' + qs, { method:'GET', mode:'no-cors' });
+    entry.submitStatus = 'success';
+    updateHistoryEntry(entry);
+    showToast('✅ Đã lưu vào Google Sheet!', 'success');
+    resetForm();
+  } catch(e) {
+    entry.submitStatus = 'fail';
+    updateHistoryEntry(entry);
+    showToast('❌ Lỗi! Đã lưu local.', 'error');
+  } finally {
+    btn.innerHTML = '<span>💾 Lưu vào Google Sheet</span>';
+    btn.disabled = false;
+    loadHistory();
+  }
+}
+
+function resetForm() {
+  currentBarcode = ''; nvData = null;
+  document.getElementById('result-card').classList.remove('show');
+  ['f-nguoiGui','f-nguoiNhan','f-soDienThoai','f-ghiChu'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('barcode-display').textContent = '—';
+  resetNvCard();
+  setTodayDate();
+  setStatus('idle', 'Nhấn "Bắt đầu quét" để mở camera');
+}
+
+function setStatus(state, text) {
+  document.getElementById('status-dot').className = 'status-dot ' + state;
+  document.getElementById('status-text').textContent = text;
+}
+
+function saveToHistory(entry) {
+  const h = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+  h.unshift(entry); if (h.length > 100) h.pop();
+  localStorage.setItem(HISTORY_KEY, JSON.stringify(h));
+}
+function updateHistoryEntry(entry) {
+  const h = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+  const idx = h.findIndex(i => i.id === entry.id);
+  if (idx >= 0) { h[idx] = entry; localStorage.setItem(HISTORY_KEY, JSON.stringify(h)); }
+}
+function loadHistory() {
+  const h = JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+  document.getElementById('history-count').textContent = h.length;
+  const list = document.getElementById('history-list');
+  if (!h.length) { list.innerHTML = '<div class="empty-state"><div class="icon">📭</div><p>Chưa có dữ liệu nào</p></div>'; return; }
+  list.innerHTML = h.slice(0,50).map(e => `
+    <div class="history-item ${e.submitStatus}">
+      <div class="hi-top">
+        <span class="hi-barcode">${e.maVanDon}</span>
+        <span class="hi-time">${e.ngayNhan||''}</span>
+      </div>
+      <div class="hi-row">👤 ${e.nguoiNhan||'Chưa rõ'} ${e.soDienThoai?'· 📞 '+e.soDienThoai:''}</div>
+      ${e.phongBan?`<div class="hi-row">🏢 ${e.phongBan}${e.boPhan?' · '+e.boPhan:''}</div>`:''}
+      ${e.ghiChu?`<div class="hi-row">📍 ${e.ghiChu}</div>`:''}
+      <span class="hi-status ${e.submitStatus==='success'?'ok':'fail'}">
+        ${e.submitStatus==='success'?'✓ Đã lưu Sheet':e.submitStatus==='pending'?'⏳ Đang xử lý':'✗ Lỗi kết nối'}
+      </span>
+    </div>
+  `).join('');
+}
+function clearHistory() {
+  if (confirm('Xóa toàn bộ lịch sử?')) { localStorage.removeItem(HISTORY_KEY); loadHistory(); showToast('Đã xóa!','success'); }
+}
+function showToast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.className = 'toast show '+(type||'');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
